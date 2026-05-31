@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Feirão do Bairro</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --green: #1A7A2E;
+    --green-dark: #0F4F1C;
+    --yellow: #F5C800;
+    --orange: #FF7A00;
+    --red: #E53935;
+  }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #F4F6F4;
+    color: #1A2E1A;
+  }
+
+  /* ===== TELA DE LOGIN ===== */
+  .login-screen {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+  }
+  .login-box {
+    background: white;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    width: 100%; max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .login-box .logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem; color: var(--green-dark);
+    margin-bottom: 0.3rem;
+  }
+  .login-box .sub {
+    font-size: 0.85rem; color: #7A8A7A;
+    margin-bottom: 2rem;
+  }
+  .login-box input {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    border: 2px solid #E0E0E0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    transition: border 0.2s;
+    margin-bottom: 1rem;
+  }
+  .login-box input:focus { border-color: var(--green); }
+  .login-box button {
+    width: 100%;
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .login-box button:hover { background: #2EAA47; }
+  .login-error {
+    color: var(--red);
+    font-size: 0.82rem;
+    margin-top: 0.8rem;
+    display: none;
+  }
+
+  /* ===== PAINEL ===== */
+  .painel { display: none; }
+  .painel-header {
+    background: var(--green-dark);
+    padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .painel-header .logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem; color: var(--yellow);
+  }
+  .painel-header .logo span {
+    color: white; font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem; font-weight: 400;
+  }
+  .btn-sair {
+    background: rgba(255,255,255,0.1);
+    color: white; border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.4rem 1rem; border-radius: 50px;
+    font-size: 0.8rem; font-weight: 700;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: background 0.2s;
+  }
+  .btn-sair:hover { background: rgba(255,255,255,0.2); }
+
+  .painel-body { padding: 2rem; max-width: 900px; margin: 0 auto; }
+
+  .painel-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem; color: var(--green-dark);
+    margin-bottom: 0.3rem;
+  }
+  .painel-sub { font-size: 0.9rem; color: #7A8A7A; margin-bottom: 2rem; }
+
+  /* ===== ABAS DE CATEGORIA ===== */
+  .abas {
+    display: flex; gap: 0.8rem; margin-bottom: 2rem; flex-wrap: wrap;
+  }
+  .aba {
+    padding: 0.6rem 1.4rem; border-radius: 50px;
+    font-size: 0.85rem; font-weight: 800;
+    cursor: pointer; border: 2px solid transparent;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.2s;
+    background: white;
+  }
+  .aba.verduras { color: #1A7A2E; border-color: #1A7A2E; }
+  .aba.verduras.ativo { background: #1A7A2E; color: white; }
+  .aba.frutas { color: #CC5500; border-color: #CC5500; }
+  .aba.frutas.ativo { background: #CC5500; color: white; }
+  .aba.temperos { color: #6A2A9A; border-color: #6A2A9A; }
+  .aba.temperos.ativo { background: #6A2A9A; color: white; }
+
+  /* ===== CARDS DE PRODUTO ===== */
+  .produtos-lista { display: flex; flex-direction: column; gap: 1rem; }
+
+  .produto-item {
+    background: white;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 1fr auto;
+    gap: 1rem; align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border: 2px solid transparent;
+    transition: border 0.2s;
+  }
+  .produto-item:hover { border-color: #E0E0E0; }
+
+  .produto-thumb {
+    width: 70px; height: 70px;
+    border-radius: 12px; object-fit: cover;
+    background: #f0f8f0;
+  }
+
+  .produto-item label {
+    font-size: 0.72rem; font-weight: 800;
+    color: #9AAA9A; text-transform: uppercase;
+    letter-spacing: 0.08em; display: block;
+    margin-bottom: 0.3rem;
+  }
+  .produto-item input {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1.5px solid #E0E0E0;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+    transition: border 0.2s;
+  }
+  .produto-item input:focus { border-color: var(--green); }
+
+  .btn-salvar-produto {
+    background: var(--green);
+    color: white; border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.8rem; font-weight: 800;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-salvar-produto:hover { background: #2EAA47; }
+  .btn-salvar-produto.salvando { background: #AAA; }
+
+  .btn-adicionar {
+    margin-top: 1.2rem;
+    background: white;
+    color: var(--green);
+    border: 2px dashed var(--green);
+    padding: 0.8rem 2rem;
+    border-radius: 12px;
+    font-size: 0.9rem; font-weight: 800;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    width: 100%; transition: all 0.2s;
+  }
+  .btn-adicionar:hover { background: #f0faf0; }
+
+  .btn-excluir {
+    background: #fff0f0;
+    color: var(--red); border: 1.5px solid #ffcdd2;
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    font-size: 0.8rem; font-weight: 800;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-excluir:hover { background: #ffcdd2; }
+
+  .produto-acoes { display: flex; flex-direction: column; gap: 0.5rem; align-items: stretch; }
+
+  .btn-novo-produto {
+    background: var(--yellow);
+    color: var(--green-dark);
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem; font-weight: 800;
+    cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: background 0.2s;
+  }
+  .btn-novo-produto:hover { background: #ffe033; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.55);
+    align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.aberto { display: flex; }
+  .modal-box {
+    background: white; border-radius: 20px;
+    width: 100%; max-width: 560px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden; animation: modalIn 0.25s ease;
+  }
+  @keyframes modalIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+  .modal-header {
+    background: var(--green-dark); padding: 1.2rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-title { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--yellow); }
+  .modal-close {
+    background: rgba(255,255,255,0.1); border: none; color: white;
+    width: 32px; height: 32px; border-radius: 50%;
+    font-size: 0.9rem; cursor: pointer; font-family: 'Nunito', sans-serif;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.25); }
+  .modal-body {
+    padding: 1.5rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    max-height: 65vh; overflow-y: auto;
+  }
+  .modal-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .modal-field.full { grid-column: 1 / -1; }
+  .modal-field label {
+    font-size: 0.72rem; font-weight: 800;
+    color: #9AAA9A; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .modal-field input {
+    padding: 0.6rem 0.8rem; border: 1.5px solid #E0E0E0; border-radius: 8px;
+    font-size: 0.88rem; font-family: 'Nunito', sans-serif;
+    outline: none; transition: border 0.2s;
+  }
+  .modal-field input:focus { border-color: var(--green); }
+  .cat-selector { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .cat-btn {
+    padding: 0.5rem 1.1rem; border-radius: 50px;
+    font-size: 0.82rem; font-weight: 800;
+    cursor: pointer; border: 2px solid transparent;
+    font-family: 'Nunito', sans-serif; background: white; transition: all 0.2s;
+  }
+  .cat-btn.verduras { color: #1A7A2E; border-color: #1A7A2E; }
+  .cat-btn.verduras.ativo { background: #1A7A2E; color: white; }
+  .cat-btn.frutas { color: #CC5500; border-color: #CC5500; }
+  .cat-btn.frutas.ativo { background: #CC5500; color: white; }
+  .cat-btn.temperos { color: #6A2A9A; border-color: #6A2A9A; }
+  .cat-btn.temperos.ativo { background: #6A2A9A; color: white; }
+  .modal-footer {
+    padding: 1rem 1.5rem; border-top: 1px solid #F0F0F0;
+    display: flex; justify-content: flex-end; gap: 0.8rem;
+  }
+  .btn-cancelar {
+    background: white; color: #888; border: 1.5px solid #E0E0E0;
+    padding: 0.7rem 1.5rem; border-radius: 10px;
+    font-size: 0.85rem; font-weight: 700;
+    cursor: pointer; font-family: 'Nunito', sans-serif; transition: all 0.2s;
+  }
+  .btn-cancelar:hover { border-color: #ccc; color: #555; }
+  .btn-cadastrar {
+    background: var(--green); color: white; border: none;
+    padding: 0.7rem 1.8rem; border-radius: 10px;
+    font-size: 0.85rem; font-weight: 800;
+    cursor: pointer; font-family: 'Nunito', sans-serif; transition: background 0.2s;
+  }
+  .btn-cadastrar:hover { background: #2EAA47; }
+  .btn-cadastrar:disabled { background: #aaa; cursor: not-allowed; }
+
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--green-dark); color: white;
+    padding: 0.8rem 2rem; border-radius: 50px;
+    font-size: 0.88rem; font-weight: 700;
+    transition: transform 0.3s ease;
+    z-index: 999;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Status */
+  .status-bar {
+    background: #E8F5E9; color: var(--green);
+    padding: 0.6rem 1.2rem; border-radius: 10px;
+    font-size: 0.82rem; font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .status-bar.erro { background: #FFEBEE; color: var(--red); }
+
+  @media (max-width: 700px) {
+    .produto-item {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+    }
+    .produto-thumb { width: 50px; height: 50px; }
+    .painel-body { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ Salvo com sucesso!</div>
+
+<!-- MODAL NOVO PRODUTO -->
+<div class="modal-overlay" id="modal-overlay" onclick="fecharModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">＋ Cadastrar Novo Produto</div>
+      <button class="modal-close" onclick="fecharModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-field full">
+        <label>Categoria</label>
+        <div class="cat-selector">
+          <button class="cat-btn verduras ativo" onclick="selecionarCat('verduras', this)">🥬 Verduras</button>
+          <button class="cat-btn frutas" onclick="selecionarCat('frutas', this)">🍎 Frutas</button>
+          <button class="cat-btn temperos" onclick="selecionarCat('temperos', this)">🌿 Temperos</button>
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label>Nome do Produto</label>
+        <input type="text" id="novo-nome" placeholder="Ex: Alface Crespa" />
+      </div>
+      <div class="modal-field">
+        <label>Unidade</label>
+        <input type="text" id="novo-unidade" placeholder="Ex: O pé, O kg, A unidade" />
+      </div>
+      <div class="modal-field">
+        <label>Preço Antigo</label>
+        <input type="text" id="novo-precoAntigo" placeholder="Ex: R$3,50" />
+      </div>
+      <div class="modal-field">
+        <label>Preço Novo</label>
+        <input type="text" id="novo-precoNovo" placeholder="Ex: R$1,99" />
+      </div>
+      <div class="modal-field">
+        <label>Economia</label>
+        <input type="text" id="novo-economia" placeholder="Ex: Economize R$1,51" />
+      </div>
+      <div class="modal-field">
+        <label>Badge <span style="font-weight:400;color:#aaa">(opcional)</span></label>
+        <input type="text" id="novo-badge" placeholder="Ex: Oferta!, Novo, 🔥 Hot!" />
+      </div>
+      <div class="modal-field full">
+        <label>URL da Imagem <span style="font-weight:400;color:#aaa">(opcional)</span></label>
+        <input type="text" id="novo-img" placeholder="https://..." />
+      </div>
+      <div class="modal-field">
+        <label>Emoji (fallback)</label>
+        <input type="text" id="novo-emoji" placeholder="Ex: 🥬 🍎 🌿" />
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-cadastrar" id="btn-cadastrar" onclick="cadastrarProduto()">✅ Cadastrar Produto</button>
+    </div>
+  </div>
+</div>
+
+<!-- TELA DE LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="logo"> Feirão do Bairro</div>
+    <div class="sub">Painel do Administrador</div>
+    <input type="password" id="senha-input" placeholder="Digite a senha" />
+    <button onclick="fazerLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<!-- PAINEL ADMIN -->
+<div class="painel" id="painel">
+  <div class="painel-header">
+    <div class="logo">🌿 Feirão do Bairro <span>— Painel Admin</span></div>
+   <div style="display:flex;gap:0.8rem;align-items:center">
+   <button onclick="limparTodosProdutos()" style="background:#E53935;color:white;border:none;padding:0.5rem 1.2rem;border-radius:50px;font-size:0.85rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;">🗑️ Limpar tudo</button>
+   <button class="btn-novo-produto" onclick="abrirModal()">＋ Novo Produto</button>
+   <button class="btn-sair" onclick="sair()">Sair</button>
+</div>  </div>
+
+  <div class="painel-body">
+    <div class="painel-title">Gerenciar Promoções</div>
+    <div class="painel-sub">Edite os produtos e clique em Salvar. As mudanças aparecem no site em tempo real!</div>
+
+    <div class="status-bar" id="status-bar">
+      🔄 Carregando produtos do banco de dados...
+    </div>
+
+    <div class="abas">
+      <button class="aba verduras ativo" onclick="trocarAba('verduras')">🥬 Verduras</button>
+      <button class="aba frutas" onclick="trocarAba('frutas')">🍎 Frutas</button>
+      <button class="aba temperos" onclick="trocarAba('temperos')">🌿 Temperos</button>
+    </div>
+
+    <div class="produtos-lista" id="produtos-lista">
+      <!-- Gerado pelo JS -->
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore-compat.js"></script>
+<script>
+  // ===== CONFIGURAÇÕES =====
+  const SENHA_ADMIN = "feirao2025"; // 🔑 Mude a senha aqui!
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeRVfELg7fhNpbBvyJ3S1tbVyL8cFjskE",
+    authDomain: "feirao-do-bairro.firebaseapp.com",
+    projectId: "feirao-do-bairro",
+    storageBucket: "feirao-do-bairro.firebasestorage.app",
+    messagingSenderId: "1037414482063",
+    appId: "1:1037414482063:web:2497dc8ca51e43b7a0f0fa",
+    measurementId: "G-Y5FZ7FWLH2"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // ===== DADOS PADRÃO (usados se o Firebase estiver vazio) =====
+  const DADOS_PADRAO = {
+    verduras: [
+      { id: "v1", nome: "Alface Crespa", unidade: "O pé", precoAntigo: "R$3,50", precoNovo: "R$1,99", economia: "Economize R$1,51", badge: "Oferta!", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&q=80", emoji: "🥬" },
+      { id: "v2", nome: "Couve Manteiga", unidade: "O maço", precoAntigo: "R$4,00", precoNovo: "R$2,49", economia: "Economize R$1,51", badge: "Destaque", img: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=400&q=80", emoji: "🥬" },
+      { id: "v3", nome: "Espinafre", unidade: "O maço", precoAntigo: "R$5,00", precoNovo: "R$2,99", economia: "Economize R$2,01", badge: "", img: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&q=80", emoji: "🌿" },
+      { id: "v4", nome: "Rúcula", unidade: "O maço", precoAntigo: "R$4,50", precoNovo: "R$2,79", economia: "Economize R$1,71", badge: "Novo", img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80", emoji: "🥗" }
+    ],
+    frutas: [
+      { id: "f1", nome: "Manga Palmer", unidade: "A unidade", precoAntigo: "R$6,00", precoNovo: "R$3,49", economia: "Economize R$2,51", badge: "🔥 Hot!", img: "https://images.unsplash.com/photo-1601493700631-2851bdbc4804?w=400&q=80", emoji: "🥭" },
+      { id: "f2", nome: "Banana Prata", unidade: "O kg", precoAntigo: "R$5,99", precoNovo: "R$3,99", economia: "Economize R$2,00", badge: "", img: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&q=80", emoji: "🍌" },
+      { id: "f3", nome: "Melancia", unidade: "A unidade", precoAntigo: "R$25,00", precoNovo: "R$14,99", economia: "Economize R$10,01", badge: "Imperdível", img: "https://images.unsplash.com/photo-1563114773-84221bd62daa?w=400&q=80", emoji: "🍉" },
+      { id: "f4", nome: "Uva Itália", unidade: "O kg", precoAntigo: "R$12,00", precoNovo: "R$7,99", economia: "Economize R$4,01", badge: "Safra", img: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=400&q=80", emoji: "🍇" }
+    ],
+    temperos: [
+      { id: "t1", nome: "Cheiro-verde", unidade: "O maço", precoAntigo: "R$3,00", precoNovo: "R$1,49", economia: "Economize R$1,51", badge: "Oferta!", img: "https://images.unsplash.com/photo-1618375569909-3c8616cf7733?w=400&q=80", emoji: "🌿" },
+      { id: "t2", nome: "Coentro", unidade: "O maço", precoAntigo: "R$2,50", precoNovo: "R$0,99", economia: "Economize R$1,51", badge: "", img: "https://images.unsplash.com/photo-1599909631845-ab47a6c2e8ef?w=400&q=80", emoji: "🌿" },
+      { id: "t3", nome: "Manjericão", unidade: "O vaso", precoAntigo: "R$8,00", precoNovo: "R$4,99", economia: "Economize R$3,01", badge: "Exclusivo", img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80", emoji: "🌱" },
+      { id: "t4", nome: "Alho Inteiro", unidade: "A cabeça", precoAntigo: "R$3,50", precoNovo: "R$1,99", economia: "Economize R$1,51", badge: "", img: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&q=80", emoji: "🧄" }
+    ]
+  };
+
+  let categoriaAtiva = "verduras";
+  let dadosAtuais = {};
+
+  // ===== LOGIN =====
+  function fazerLogin() {
+    const senha = document.getElementById('senha-input').value;
+    if (senha === SENHA_ADMIN) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('painel').style.display = 'block';
+      carregarProdutos();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  }
+
+  document.getElementById('senha-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') fazerLogin();
+  });
+
+  function sair() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('painel').style.display = 'none';
+    document.getElementById('senha-input').value = '';
+  }
+
+  // ===== CARREGAR DO FIREBASE =====
+  async function carregarProdutos() {
+    const statusBar = document.getElementById('status-bar');
+    try {
+      const doc = await db.collection('promocoes').doc('produtos').get();
+      if (doc.exists) {
+        dadosAtuais = doc.data();
+        statusBar.textContent = '✅ Produtos carregados do banco de dados!';
+      } else {
+        dadosAtuais = JSON.parse(JSON.stringify(DADOS_PADRAO));
+        await db.collection('promocoes').doc('produtos').set(dadosAtuais);
+        statusBar.textContent = '✅ Dados iniciais criados no banco de dados!';
+      }
+      renderizarProdutos();
+    } catch (e) {
+      statusBar.className = 'status-bar erro';
+      statusBar.textContent = '❌ Erro ao carregar. Verifique a conexão.';
+    }
+  }
+
+  // ===== RENDERIZAR PRODUTOS =====
+  function renderizarProdutos() {
+    const lista = document.getElementById('produtos-lista');
+    const produtos = dadosAtuais[categoriaAtiva] || [];
+    lista.innerHTML = produtos.map((p, i) => `
+      <div class="produto-item">
+        <img class="produto-thumb" src="${p.img}" onerror="this.src=''" alt="${p.nome}"/>
+        <div>
+          <label>Nome</label>
+          <input type="text" id="${categoriaAtiva}_${i}_nome" value="${p.nome}" />
+        </div>
+        <div>
+          <label>Preço Antigo</label>
+          <input type="text" id="${categoriaAtiva}_${i}_precoAntigo" value="${p.precoAntigo}" />
+          <label style="margin-top:0.5rem">Preço Novo</label>
+          <input type="text" id="${categoriaAtiva}_${i}_precoNovo" value="${p.precoNovo}" />
+        </div>
+        <div>
+          <label>Economia</label>
+          <input type="text" id="${categoriaAtiva}_${i}_economia" value="${p.economia}" />
+          <label style="margin-top:0.5rem">Badge</label>
+          <input type="text" id="${categoriaAtiva}_${i}_badge" value="${p.badge}" placeholder="Ex: Oferta!" />
+        </div>
+        <div class="produto-acoes">
+          <button class="btn-salvar-produto" id="btn-salvar-${i}" onclick="salvarProduto(${i})">💾 Salvar</button>
+          <button class="btn-excluir" onclick="excluirProduto(${i})">🗑️ Excluir</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ===== COLETAR DADOS DO FORMULÁRIO =====
+  function coletarDados(i) {
+    return {
+      ...dadosAtuais[categoriaAtiva][i],
+      nome:        document.getElementById(`${categoriaAtiva}_${i}_nome`).value,
+      precoAntigo: document.getElementById(`${categoriaAtiva}_${i}_precoAntigo`).value,
+      precoNovo:   document.getElementById(`${categoriaAtiva}_${i}_precoNovo`).value,
+      economia:    document.getElementById(`${categoriaAtiva}_${i}_economia`).value,
+      badge:       document.getElementById(`${categoriaAtiva}_${i}_badge`).value,
+    };
+  }
+
+  // ===== SALVAR PRODUTO =====
+  async function salvarProduto(i) {
+    const btn = document.getElementById(`btn-salvar-${i}`);
+    btn.textContent = '...';
+    btn.classList.add('salvando');
+
+    dadosAtuais[categoriaAtiva][i] = coletarDados(i);
+
+    try {
+      await db.collection('promocoes').doc('produtos').set(dadosAtuais);
+      mostrarToast('✅ Salvo com sucesso!');
+    } catch(e) {
+      mostrarToast('❌ Erro ao salvar!');
+    }
+
+    btn.textContent = '💾 Salvar';
+    btn.classList.remove('salvando');
+  }
+
+  // ===== EXCLUIR PRODUTO =====
+
+  async function excluirProduto(i) {
+  if (!confirm(`Excluir "${dadosAtuais[categoriaAtiva][i].nome}"?`)) return;
+
+  dadosAtuais[categoriaAtiva].splice(i, 1);
+
+  try {
+    await db.collection('promocoes').doc('produtos').set(dadosAtuais);
+    mostrarToast('🗑️ Produto excluído!');
+  } catch(e) {
+    mostrarToast('❌ Erro ao excluir!');
+  }
+
+  renderizarProdutos();
+}
+
+  async function limparTodosProdutos() {
+  if (!confirm('⚠️ Isso vai apagar TODOS os produtos do Firebase. Tem certeza?')) return;
+  
+  try {
+    await db.collection('promocoes').doc('produtos').set({
+      verduras: [],
+      frutas: [],
+      temperos: []
+    });
+    dadosAtuais = { verduras: [], frutas: [], temperos: [] };
+    mostrarToast('✅ Todos os produtos foram removidos!');
+    renderizarProdutos();
+  } catch(e) {
+    mostrarToast('❌ Erro ao limpar!');
+  }
+}
+  // ===== ADICIONAR PRODUTO =====
+  async function adicionarProduto() {
+    const novo = {
+      id: categoriaAtiva[0] + Date.now(),
+      nome: 'Novo Produto',
+      unidade: 'A unidade',
+      precoAntigo: 'R$0,00',
+      precoNovo: 'R$0,00',
+      economia: 'Economize R$0,00',
+      badge: '',
+      img: '',
+      emoji: '🛒'
+    };
+
+    dadosAtuais[categoriaAtiva].push(novo);
+
+    try {
+      await db.collection('promocoes').doc('produtos').set(dadosAtuais);
+      mostrarToast('✅ Produto adicionado!');
+    } catch(e) {
+      mostrarToast('❌ Erro ao adicionar!');
+    }
+
+    renderizarProdutos();
+
+    // Scroll pro novo card
+    const lista = document.getElementById('produtos-lista');
+    lista.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // ===== MODAL =====
+  let catModal = 'verduras';
+
+  function abrirModal() {
+    document.getElementById('modal-overlay').classList.add('aberto');
+    // Limpar campos
+    ['nome','unidade','precoAntigo','precoNovo','economia','badge','img','emoji'].forEach(f => {
+      document.getElementById(`novo-${f}`).value = '';
+    });
+    catModal = 'verduras';
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('ativo'));
+    document.querySelector('.cat-btn.verduras').classList.add('ativo');
+  }
+
+  function fecharModal(e) {
+    if (e && e.target !== document.getElementById('modal-overlay')) return;
+    document.getElementById('modal-overlay').classList.remove('aberto');
+  }
+
+  function selecionarCat(cat, btn) {
+    catModal = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
+  }
+
+  async function cadastrarProduto() {
+    const nome = document.getElementById('novo-nome').value.trim();
+    if (!nome) { mostrarToast('⚠️ Informe o nome do produto!'); return; }
+
+    const btn = document.getElementById('btn-cadastrar');
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    const novo = {
+      id: catModal[0] + Date.now(),
+      nome,
+      unidade:     document.getElementById('novo-unidade').value.trim()     || 'A unidade',
+      precoAntigo: document.getElementById('novo-precoAntigo').value.trim() || 'R$0,00',
+      precoNovo:   document.getElementById('novo-precoNovo').value.trim()   || 'R$0,00',
+      economia:    document.getElementById('novo-economia').value.trim()    || '',
+      badge:       document.getElementById('novo-badge').value.trim()       || '',
+      img:         document.getElementById('novo-img').value.trim()         || '',
+      emoji:       document.getElementById('novo-emoji').value.trim()       || '🛒',
+    };
+
+    if (!dadosAtuais[catModal]) dadosAtuais[catModal] = [];
+    dadosAtuais[catModal].push(novo);
+
+    try {
+      await db.collection('promocoes').doc('produtos').set(dadosAtuais);
+      mostrarToast(`✅ "${nome}" cadastrado em ${catModal}!`);
+      document.getElementById('modal-overlay').classList.remove('aberto');
+      // Se a aba ativa for a mesma, re-renderiza
+      if (categoriaAtiva === catModal) {
+        renderizarProdutos();
+        setTimeout(() => {
+          document.getElementById('produtos-lista').lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    } catch(e) {
+      mostrarToast('❌ Erro ao cadastrar!');
+    }
+
+    btn.disabled = false;
+    btn.textContent = '✅ Cadastrar Produto';
+  }
+
+  // ===== TROCAR ABA =====
+  function trocarAba(cat) {
+    categoriaAtiva = cat;
+    document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativo'));
+    document.querySelector(`.aba.${cat}`).classList.add('ativo');
+    renderizarProdutos();
+  }
+
+  // ===== TOAST =====
+  function mostrarToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
