@@ -226,6 +226,7 @@ body{font-family:'Nunito',sans-serif;background:#F4F6F4;color:#1A2E1A}
   <div class="menu-principal">
     <button class="menu-item ativo" onclick="trocarSecao('promocoes',this)">🔥 Promoções</button>
     <button class="menu-item" onclick="trocarSecao('catalogo-admin',this)">🛒 Catálogo</button>
+    <button class="menu-item" onclick="trocarSecao('config-promocao',this)">⏱️ Tempo Promoção</button>
   </div>
 
   <!-- SEÇÃO PROMOÇÕES -->
@@ -240,6 +241,28 @@ body{font-family:'Nunito',sans-serif;background:#F4F6F4;color:#1A2E1A}
     </div>
     <div class="produtos-lista" id="produtos-lista"></div>
   </div>
+
+<!-- temporizador novo -->
+
+<div class="secao" id="secao-config-promocao">
+  <div class="secao-title">⏱️ Tempo da Promoção</div>
+  <div class="secao-sub">Defina o início e fim. Quando acabar, os produtos em promoção são removidos automaticamente!</div>
+  <div class="status-bar" id="status-config">⏳ Carregando...</div>
+  <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 10px rgba(0,0,0,0.06);max-width:500px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+      <div>
+        <label style="font-size:0.72rem;font-weight:800;color:#9AAA9A;text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:0.4rem">Início da Promoção</label>
+        <input type="datetime-local" id="config-inicio" style="width:100%;padding:0.65rem 0.8rem;border:1.5px solid #E0E0E0;border-radius:8px;font-size:0.88rem;font-family:'Nunito',sans-serif;outline:none"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;font-weight:800;color:#9AAA9A;text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:0.4rem">Fim da Promoção</label>
+        <input type="datetime-local" id="config-fim" style="width:100%;padding:0.65rem 0.8rem;border:1.5px solid #E0E0E0;border-radius:8px;font-size:0.88rem;font-family:'Nunito',sans-serif;outline:none"/>
+      </div>
+    </div>
+    <button onclick="salvarConfigPromocao()" style="background:var(--green);color:white;border:none;padding:0.9rem 2rem;border-radius:50px;font-size:0.9rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;width:100%">💾 Salvar Configuração</button>
+    <div id="config-preview" style="margin-top:1.2rem;padding:1rem;background:#F4F6F4;border-radius:10px;font-size:0.85rem;color:#5A6A5A;display:none"></div>
+  </div>
+</div>
 
   <!-- SEÇÃO CATÁLOGO -->
   <div class="secao" id="secao-catalogo-admin">
@@ -287,6 +310,7 @@ function fazerLogin() {
     document.getElementById('painel').style.display = 'block';
     carregarProdutos();
     carregarCatalogo();
+    carregarConfigPromocao();
   } else {
     document.getElementById('login-error').style.display = 'block';
   }
@@ -584,6 +608,47 @@ async function cadastrarCatalogo() {
   } catch(e) { mostrarToast('❌ Erro ao cadastrar!'); }
   btn.disabled = false; btn.textContent = '✅ Adicionar ao Catálogo';
 }
+
+// ===== CONFIG PROMOÇÃO =====
+async function carregarConfigPromocao() {
+  try {
+    const doc = await db.collection('config').doc('promocao').get();
+    if (doc.exists) {
+      const data = doc.data();
+      document.getElementById('config-inicio').value = data.inicio || '';
+      document.getElementById('config-fim').value = data.fim || '';
+      mostrarPreviewConfig(data.inicio, data.fim);
+      document.getElementById('status-config').textContent = '✅ Configuração carregada!';
+    } else {
+      document.getElementById('status-config').textContent = '⚠️ Nenhuma configuração salva ainda.';
+    }
+  } catch(e) {
+    document.getElementById('status-config').textContent = '❌ Erro ao carregar.';
+    document.getElementById('status-config').className = 'status-bar erro';
+  }
+}
+
+async function salvarConfigPromocao() {
+  const inicio = document.getElementById('config-inicio').value;
+  const fim = document.getElementById('config-fim').value;
+  if (!inicio || !fim) { mostrarToast('⚠️ Preencha início e fim!'); return; }
+  if (new Date(fim) <= new Date(inicio)) { mostrarToast('⚠️ O fim deve ser depois do início!'); return; }
+  try {
+    await db.collection('config').doc('promocao').set({ inicio, fim });
+    mostrarToast('✅ Configuração salva!');
+    mostrarPreviewConfig(inicio, fim);
+  } catch(e) { mostrarToast('❌ Erro ao salvar!'); }
+}
+
+function mostrarPreviewConfig(inicio, fim) {
+  const el = document.getElementById('config-preview');
+  if (!inicio || !fim) return;
+  const ini = new Date(inicio).toLocaleString('pt-BR');
+  const fi = new Date(fim).toLocaleString('pt-BR');
+  el.style.display = 'block';
+  el.innerHTML = `⏰ <strong>Início:</strong> ${ini}<br>🏁 <strong>Fim:</strong> ${fi}`;
+}
+
 
 function trocarAbaCatalogo(cat) {
   catCatalogoAtiva = cat;
