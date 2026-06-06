@@ -826,31 +826,66 @@ const LOJA = {
 
 /* ===== CONTADOR REGRESSIVO ===== */
 function iniciarContador() {
-  // Muda aqui as horas que quer contar (padrão 8 horas)
-  const HORAS_PROMOCAO = 8;
-  let total = HORAS_PROMOCAO * 60 * 60;
-
   const elHoras = document.getElementById('contador-horas');
   const elMinutos = document.getElementById('contador-minutos');
   const elSegundos = document.getElementById('contador-segundos');
 
-  function atualizar() {
-    if (total <= 0) {
-      total = HORAS_PROMOCAO * 60 * 60; // reinicia ao zerar
+  async function carregarEIniciar() {
+    try {
+      const doc = await db.collection('config').doc('promocao').get();
+      if (!doc.exists) return;
+
+      const { inicio, fim } = doc.data();
+      const agora = new Date();
+      const dataFim = new Date(fim);
+      const dataInicio = new Date(inicio);
+
+      // Se promoção ainda não começou ou já acabou
+      if (agora < dataInicio || agora > dataFim) {
+        // Limpa produtos automaticamente se passou do fim
+        if (agora > dataFim) {
+          await db.collection('promocoes').doc('produtos').set({ verduras:[], frutas:[], temperos:[] });
+        }
+        elHoras.textContent = '00';
+        elMinutos.textContent = '00';
+        elSegundos.textContent = '00';
+        return;
+      }
+
+      function atualizar() {
+        const agora = new Date();
+        const diff = Math.max(0, dataFim - agora);
+
+        if (diff <= 0) {
+          elHoras.textContent = '00';
+          elMinutos.textContent = '00';
+          elSegundos.textContent = '00';
+          // Limpa produtos ao zerar
+          db.collection('promocoes').doc('produtos').set({ verduras:[], frutas:[], temperos:[] });
+          clearInterval(intervalo);
+          return;
+        }
+
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+
+        elHoras.textContent   = String(h).padStart(2,'0');
+        elMinutos.textContent = String(m).padStart(2,'0');
+        elSegundos.textContent = String(s).padStart(2,'0');
+      }
+
+      atualizar();
+      const intervalo = setInterval(atualizar, 1000);
+
+    } catch(e) {
+      console.log('Erro no contador:', e);
     }
-    const h = Math.floor(total / 3600);
-    const m = Math.floor((total % 3600) / 60);
-    const s = total % 60;
-    elHoras.textContent = String(h).padStart(2, '0');
-    elMinutos.textContent = String(m).padStart(2, '0');
-    elSegundos.textContent = String(s).padStart(2, '0');
-    total--;
   }
 
-  atualizar();
-  setInterval(atualizar, 1000);
+  carregarEIniciar();
 }
-iniciarContador();
+
 
 /* ===== APLICA AS CORES DINAMICAMENTE ===== */
 document.documentElement.style.setProperty('--green', LOJA.cores.principal);
@@ -963,6 +998,7 @@ function renderizarProdutos(dados) {
 // Inicializa Firebase e escuta mudanças em tempo real
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+iniciarContador();
 
 // Fallback: renderiza com dados locais enquanto carrega
 renderizarProdutos({ verduras: [], frutas: [], temperos: [] });
