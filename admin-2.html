@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — Feirão do Bairro</title>
+<title>Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -149,8 +149,9 @@ body{font-family:'Nunito',sans-serif;background:#F4F6F4;color:#1A2E1A}
       <div class="modal-field"><label>Preço Novo</label><input type="text" id="novo-precoNovo" placeholder="Ex: R$1,99"/></div>
       <div class="modal-field"><label>Economia</label><input type="text" id="novo-economia" placeholder="Ex: Economize R$1,51"/></div>
       <div class="modal-field"><label>Badge (opcional)</label><input type="text" id="novo-badge" placeholder="Ex: Oferta!, 🔥 Hot!"/></div>
-      <div class="modal-field full"><label>URL da Imagem (opcional)</label><input type="text" id="novo-img" placeholder="https://..."/></div>
-      <div class="modal-field"><label>Emoji (fallback)</label><input type="text" id="novo-emoji" placeholder="Ex: 🥬"/></div>
+      <label>FOTO DO PRODUTO</label>
+       <input type="file" id="fotoProduto1" accept="image/*">
+       <div class="modal-field"><label>Emoji (fallback)</label><input type="text" id="novo-emoji" placeholder="Ex: 🥬"/></div>
     </div>
     <div class="modal-footer">
       <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
@@ -183,7 +184,8 @@ body{font-family:'Nunito',sans-serif;background:#F4F6F4;color:#1A2E1A}
       <div class="modal-field"><label>Preço Antigo (opcional)</label><input type="text" id="cat-precoAntigo" placeholder="Ex: R$6,00"/></div>
       <div class="modal-field"><label>Economia (opcional)</label><input type="text" id="cat-economia" placeholder="Ex: Economize R$2,01"/></div>
       <div class="modal-field"><label>Badge (opcional)</label><input type="text" id="cat-badge" placeholder="Ex: 🔥 Hot!"/></div>
-      <div class="modal-field full"><label>URL da Imagem (opcional)</label><input type="text" id="cat-img" placeholder="https://..."/></div>
+        <label>FOTO DO PRODUTO</label>
+        <input type="file" id="fotoProduto2" accept="image/*">
       <div class="modal-field full">
         <label>Disponibilidade</label>
         <select id="cat-disponivel">
@@ -202,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:#F4F6F4;color:#1A2E1A}
 <!-- LOGIN -->
 <div class="login-screen" id="login-screen">
   <div class="login-box">
-    <div class="logo">🌿 Feirão do Bairro</div>
+    <div class="logo">Hortifruti</div>
     <div class="sub">Painel do Administrador</div>
     <input type="password" id="senha-input" placeholder="Digite a senha"/>
     <button onclick="fazerLogin()">Entrar</button>
@@ -213,7 +215,7 @@ body{font-family:'Nunito',sans-serif;background:#F4F6F4;color:#1A2E1A}
 <!-- PAINEL -->
 <div class="painel" id="painel">
   <div class="painel-header">
-    <div class="logo">🌿 Feirão do Bairro <span>— Painel Admin</span></div>
+    <div class="logo">Hortifruti <span>— Painel Admin</span></div>
     <div style="display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap">
       <button onclick="limparTodosProdutos()" style="background:#E53935;color:white;border:none;padding:0.5rem 1.2rem;border-radius:50px;font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;">🗑️ Limpar Promoções</button>
       <button class="btn-novo-produto" onclick="abrirModal()">＋ Promoção</button>
@@ -283,14 +285,16 @@ body{font-family:'Nunito',sans-serif;background:#F4F6F4;color:#1A2E1A}
 <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore-compat.js"></script>
 <script>
-const SENHA_ADMIN = "feirao2025";
+const SENHA_ADMIN = "teste123";
 const firebaseConfig = {
-  apiKey: "AIzaSyCeRVfELg7fhNpbBvyJ3S1tbVyL8cFjskE",
-  authDomain: "feirao-do-bairro.firebaseapp.com",
-  projectId: "feirao-do-bairro",
-  storageBucket: "feirao-do-bairro.firebasestorage.app",
-  messagingSenderId: "1037414482063",
-  appId: "1:1037414482063:web:2497dc8ca51e43b7a0f0fa"
+    apiKey: "AIzaSyC5ZFLt5z73v8pco0X7nzpb9N2Xlsmfrzo",
+    authDomain: "hortifruti-system.firebaseapp.com",
+    projectId: "hortifruti-system",
+    storageBucket: "hortifruti-system.firebasestorage.app",
+    messagingSenderId: "634521386120",
+    appId: "1:634521386120:web:9f93d751a45a9f8fa3b33d",
+    measurementId: "G-YF5KJH1BPD"
+  
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -310,7 +314,6 @@ function fazerLogin() {
     document.getElementById('painel').style.display = 'block';
     carregarProdutos();
     carregarCatalogo();
-    carregarConfigPromocao();
   } else {
     document.getElementById('login-error').style.display = 'block';
   }
@@ -448,31 +451,86 @@ function selecionarCat(cat, btn) {
   document.querySelectorAll('#modal-overlay .cat-btn').forEach(b => b.classList.remove('ativo'));
   btn.classList.add('ativo');
 }
+
+
 async function cadastrarProduto() {
   const nome = document.getElementById('novo-nome').value.trim();
   if (!nome) { mostrarToast('⚠️ Informe o nome!'); return; }
+
+  // 1. Pega o arquivo de imagem do novo input
+  const fileInput = document.getElementById('fotoProduto1');
+  const file = fileInput ? fileInput.files[0] : null;
+  
+  if (!file) { 
+    mostrarToast('⚠️ Selecione uma foto para o produto!'); 
+    return; 
+  }
+
   const btn = document.getElementById('btn-cadastrar');
-  btn.disabled = true; btn.textContent = '...';
-  const novo = {
-    id: catModal[0]+Date.now(), nome,
-    unidade:     document.getElementById('novo-unidade').value.trim()     || 'A unidade',
-    precoAntigo: document.getElementById('novo-precoAntigo').value.trim() || 'R$0,00',
-    precoNovo:   document.getElementById('novo-precoNovo').value.trim()   || 'R$0,00',
-    economia:    document.getElementById('novo-economia').value.trim()    || '',
-    badge:       document.getElementById('novo-badge').value.trim()       || '',
-    img:         document.getElementById('novo-img').value.trim()         || '',
-    emoji:       document.getElementById('novo-emoji').value.trim()       || '🛒',
-  };
-  if (!dadosAtuais[catModal]) dadosAtuais[catModal] = [];
-  dadosAtuais[catModal].push(novo);
+  btn.disabled = true; 
+  btn.textContent = 'Enviando foto...';
+
+  // Chave da sua API do ImgBB
+  const apiKey = "70100a245a1b794ddb4f5fae534ff95b"; 
+  let urlImagemGerada = "";
+
   try {
+    // 2. Faz o upload da foto para o ImgBB
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: "POST",
+      body: formData
+    });
+    
+    const resData = await response.json();
+    
+    if (resData.success) {
+      urlImagemGerada = resData.data.url; // Pega o link real gerado
+    } else {
+      mostrarToast('❌ Erro ao processar a imagem!');
+      btn.disabled = false; 
+      btn.textContent = '✅ Cadastrar Produto';
+      return;
+    }
+
+    // 3. Monta o seu objeto mantendo a sua estrutura original
+    const novo = {
+      id: catModal[0] + Date.now(), 
+      nome,
+      unidade:     document.getElementById('novo-unidade').value.trim()     || 'A unidade',
+      precoAntigo: document.getElementById('novo-precoAntigo').value.trim() || 'R$0,00',
+      precoNovo:   document.getElementById('novo-precoNovo').value.trim()   || 'R$0,00',
+      economia:    document.getElementById('novo-economia').value.trim()    || '',
+      badge:       document.getElementById('novo-badge').value.trim()       || '',
+      img:         urlImagemGerada, // 👈 Aqui entra o link da foto que acabou de vir do celular!
+      emoji:       document.getElementById('novo-emoji').value.trim()       || '🛒',
+    };
+
+    if (!dadosAtuais[catModal]) dadosAtuais[catModal] = [];
+    dadosAtuais[catModal].push(novo);
+
+    // 4. Salva no Firebase Firestore exatamente como estava antes
     await db.collection('promocoes').doc('produtos').set(dadosAtuais);
+    
     mostrarToast(`✅ "${nome}" cadastrado em promoções!`);
     document.getElementById('modal-overlay').classList.remove('aberto');
     if (categoriaAtiva === catModal) renderizarProdutos();
-  } catch(e) { mostrarToast('❌ Erro ao cadastrar!'); }
-  btn.disabled = false; btn.textContent = '✅ Cadastrar Produto';
+    
+    // Limpa o campo de arquivo para o próximo cadastro
+    if (fileInput) fileInput.value = "";
+
+  } catch(e) { 
+    console.error(e);
+    mostrarToast('❌ Erro ao cadastrar!'); 
+  }
+
+  btn.disabled = false; 
+  btn.textContent = '✅ Cadastrar Produto';
 }
+
+
 
 function trocarAba(cat) {
   categoriaAtiva = cat;
@@ -581,33 +639,87 @@ function selecionarCatCatalogo(cat, btn) {
   document.querySelectorAll('#modal-catalogo .cat-btn').forEach(b => b.classList.remove('ativo'));
   btn.classList.add('ativo');
 }
+
+
 async function cadastrarCatalogo() {
   const nome = document.getElementById('cat-nome').value.trim();
   if (!nome) { mostrarToast('⚠️ Informe o nome!'); return; }
+
+  // 1. Pega o arquivo de imagem do segundo input que você colocou no HTML
+  const fileInput = document.getElementById('fotoProduto2');
+  const file = fileInput ? fileInput.files[0] : null;
+  
+  if (!file) { 
+    mostrarToast('⚠️ Selecione uma foto para o produto!'); 
+    return; 
+  }
+
   const btn = document.getElementById('btn-cadastrar-cat');
-  btn.disabled = true; btn.textContent = '...';
-  const novo = {
-    id: catModalCatalogo[0]+Date.now(), nome,
-    emoji:       document.getElementById('cat-emoji').value.trim()       || '🛒',
-    unidade:     document.getElementById('cat-unidade').value.trim()     || 'A unidade',
-    precoNovo:   document.getElementById('cat-preco').value.trim()       || 'Consultar',
-    precoAntigo: document.getElementById('cat-precoAntigo').value.trim() || '',
-    economia:    document.getElementById('cat-economia').value.trim()    || '',
-    badge:       document.getElementById('cat-badge').value.trim()       || '',
-    img:         document.getElementById('cat-img').value.trim()         || '',
-    disponivel:  document.getElementById('cat-disponivel').value === 'true',
-    categoria:   catModalCatalogo,
-  };
-  if (!dadosCatalogo[catModalCatalogo]) dadosCatalogo[catModalCatalogo] = [];
-  dadosCatalogo[catModalCatalogo].push(novo);
+  btn.disabled = true; 
+  btn.textContent = 'Enviando foto...';
+
+  // Chave da sua API do ImgBB
+  const apiKey = "70100a245a1b794ddb4f5fae534ff95b"; 
+  let urlImagemGerada = "";
+
   try {
+    // 2. Faz o upload da foto do catálogo para o ImgBB
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: "POST",
+      body: formData
+    });
+    
+    const resData = await response.json();
+    
+    if (resData.success) {
+      urlImagemGerada = resData.data.url; // Pega o link real gerado para o catálogo
+    } else {
+      mostrarToast('❌ Erro ao processar a imagem do catálogo!');
+      btn.disabled = false; 
+      btn.textContent = '✅ Adicionar ao Catálogo';
+      return;
+    }
+
+    // 3. Monta o objeto mantendo exatamente as suas variáveis e padrões
+    const novo = {
+      id: catModalCatalogo[0] + Date.now(), 
+      nome,
+      emoji:       document.getElementById('cat-emoji').value.trim()       || '🛒',
+      unidade:     document.getElementById('cat-unidade').value.trim()     || 'A unidade',
+      precoNovo:   document.getElementById('cat-preco').value.trim()       || 'Consultar',
+      precoAntigo: document.getElementById('cat-precoAntigo').value.trim() || '',
+      economia:    document.getElementById('cat-economia').value.trim()    || '',
+      badge:       document.getElementById('cat-badge').value.trim()       || '',
+      img:         urlImagemGerada, // 👈 Aqui entra o link da foto que veio do dispositivo!
+      disponivel:  document.getElementById('cat-disponivel').value === 'true',
+      categoria:   catModalCatalogo,
+    };
+
+    if (!dadosCatalogo[catModalCatalogo]) dadosCatalogo[catModalCatalogo] = [];
+    dadosCatalogo[catModalCatalogo].push(novo);
+
+    // 4. Salva no Firestore dentro da coleção 'catalogo'
     await db.collection('catalogo').doc('produtos').set(dadosCatalogo);
+    
     mostrarToast(`✅ "${nome}" adicionado ao catálogo!`);
     document.getElementById('modal-catalogo').classList.remove('aberto');
     if (catCatalogoAtiva === catModalCatalogo) renderizarCatalogo();
-  } catch(e) { mostrarToast('❌ Erro ao cadastrar!'); }
-  btn.disabled = false; btn.textContent = '✅ Adicionar ao Catálogo';
+    
+    // Limpa o campo de arquivo para o próximo cadastro
+    if (fileInput) fileInput.value = "";
+
+  } catch(e) { 
+    console.error(e);
+    mostrarToast('❌ Erro ao cadastrar!'); 
+  }
+
+  btn.disabled = false; 
+  btn.textContent = '✅ Adicionar ao Catálogo';
 }
+
 
 // ===== CONFIG PROMOÇÃO =====
 async function carregarConfigPromocao() {
