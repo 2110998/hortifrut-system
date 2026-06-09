@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hortifruti Feirão do Bairro — Frutas, Verduras & Muito Mais</title>
+<title>Hortifruti — Frutas, Verduras & Muito Mais</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -548,13 +548,13 @@ nav ul { display: flex; gap: 2rem; }
 </svg>
 
 <!-- WHATSAPP FLOAT -->
-<a href="https://wa.me/5511978472942?text=Olá!%20Vi%20a%20página%20de%20vocês%20e%20quero%20saber%20mais%20sobre%20os%20produtos!" class="whatsapp-float" target="_blank" title="Fale conosco no WhatsApp">
+<a href="https://wa.me/5511941474285?text=Olá!%20Vi%20a%20página%20de%20vocês%20e%20quero%20saber%20mais%20sobre%20os%20produtos!" class="whatsapp-float" target="_blank" title="Fale conosco no WhatsApp">
   <svg><use href="#wa-icon"/></svg>
 </a>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">🌿 Feirão do Bairro <span>Hortifruti</span></div>
+  <div class="nav-logo">Hortifruti<span>Hortifruti</span></div>
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span>
     <span></span>
@@ -566,7 +566,7 @@ nav ul { display: flex; gap: 2rem; }
     <li><a href="#sobre">A Loja</a></li>
     <li><a href="#depoimentos">Avaliações</a></li>
     <li>
-      <a href="https://wa.me/5511978472942" target="_blank" class="nav-btn">
+      <a href="https://wa.me/5511941474285" target="_blank" class="nav-btn">
         <svg><use href="#wa-icon"/></svg> WhatsApp
       </a>
     </li>
@@ -585,7 +585,7 @@ nav ul { display: flex; gap: 2rem; }
     <h1>O melhor do campo<br><span class="highlight">chegou perto</span><br>de você!</h1>
     <p>Frutas frescas, verduras selecionadas, temperos do Norte e muito mais. Qualidade de feira com a praticidade de ter tudo num só lugar.</p>
     <div class="hero-btns">
-      <a href="https://wa.me/5511978472942?text=Olá!%20Quero%20ver%20os%20produtos%20em%20promoção!" class="btn-whatsapp" target="_blank">
+      <a href="https://wa.me/5511941474285?text=Olá!%20Quero%20ver%20os%20produtos%20em%20promoção!" class="btn-whatsapp" target="_blank">
         <svg><use href="#wa-icon"/></svg> Pedir pelo WhatsApp
       </a>
       <a href="#promocoes" class="btn-outline">Ver promoções ↓</a>
@@ -677,7 +677,7 @@ nav ul { display: flex; gap: 2rem; }
   <div class="sobre-visual reveal">
     <div class="sobre-main-card">
       <span class="sobre-big-emoji">🌿</span>
-      <h3>Feirão do Bairro</h3>
+      <h3>Hortifruti</h3>
       <p>Há mais de 10 anos levando frescor e qualidade pras mesas da nossa comunidade.</p>
       <div class="sobre-stats">
         <div class="sstat"><span class="sstat-num">10+</span><span class="sstat-label">Anos no bairro</span></div>
@@ -743,7 +743,7 @@ nav ul { display: flex; gap: 2rem; }
     <div class="cta-card"><span class="cta-card-icon">🌿</span><div class="cta-card-text">Sempre fresco</div></div>
     <div class="cta-card"><span class="cta-card-icon">✅</span><div class="cta-card-text">Qualidade garantida</div></div>
   </div>
-  <a href="https://wa.me/5511978472942?text=Olá!%20Quero%20fazer%20um%20pedido!" class="btn-cta-big" target="_blank">
+  <a href="https://wa.me/5511941474285?text=Olá!%20Quero%20fazer%20um%20pedido!" class="btn-cta-big" target="_blank">
     <svg><use href="#wa-icon"/></svg>
     Chamar no WhatsApp
     <span class="pulse-dot"></span>
@@ -752,12 +752,12 @@ nav ul { display: flex; gap: 2rem; }
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">🌿 Feirão do Bairro<span>Hortifruti — Qualidade que você vê e sente</span></div>
-  <p>© 2025 Feirão do Bairro. Todos os direitos reservados.</p>
+  <div class="footer-logo">Hortifruti<span>Hortifruti — Qualidade que você vê e sente</span></div>
+  <p>© 2025 Hortifruti. Todos os direitos reservados.</p>
   <div class="footer-links">
     <a href="#promocoes">Promoções</a>
     <a href="#sobre">Sobre</a>
-    <a href="https://wa.me/5511978472942" target="_blank">WhatsApp</a>
+    <a href="https://wa.me/5511941474285" target="_blank">WhatsApp</a>
   </div>
 </footer>
 
@@ -786,10 +786,10 @@ const PROMO_DATA = {
    Só mexa nesse bloco pra adaptar pra cada cliente
 =============================================== */
 const LOJA = {
-  nome: "Feirão do Bairro",
+  nome: "Hortifruti",
   slogan: "O melhor do campo chegou perto de você!",
   descricao: "Frutas frescas, verduras selecionadas, temperos do Norte e muito mais.",
-  whatsapp: "5511978472942",
+  whatsapp: "5511941474285",
   cores: {
     principal: "#1A7A2E",
     principalDark: "#0F4F1C",
@@ -842,8 +842,9 @@ function iniciarContador() {
 
       // Se promoção ainda não começou ou já acabou
       if (agora < dataInicio || agora > dataFim) {
-        // Limpa produtos automaticamente se passou do fim
-        if (agora > dataFim) {
+        // Só limpa produtos se a promoção realmente já expirou (fim no passado)
+        // E apenas se o fim foi configurado há mais de 1 hora (evita limpar por engano)
+        if (agora > dataFim && (agora - dataFim) > 3600000) {
           await db.collection('promocoes').doc('produtos').set({ verduras:[], frutas:[], temperos:[] });
         }
         elHoras.textContent = '00';
@@ -931,13 +932,14 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 /* ===== FIREBASE — RENDERIZA PRODUTOS EM TEMPO REAL ===== */
 const firebaseConfig = {
-  apiKey: "AIzaSyCeRVfELg7fhNpbBvyJ3S1tbVyL8cFjskE",
-  authDomain: "feirao-do-bairro.firebaseapp.com",
-  projectId: "feirao-do-bairro",
-  storageBucket: "feirao-do-bairro.firebasestorage.app",
-  messagingSenderId: "1037414482063",
-  appId: "1:1037414482063:web:2497dc8ca51e43b7a0f0fa"
-};
+    apiKey: "AIzaSyC5ZFLt5z73v8pco0X7nzpb9N2Xlsmfrzo",
+    authDomain: "hortifruti-system.firebaseapp.com",
+    projectId: "hortifruti-system",
+    storageBucket: "hortifruti-system.firebasestorage.app",
+    messagingSenderId: "634521386120",
+    appId: "1:634521386120:web:9f93d751a45a9f8fa3b33d",
+    measurementId: "G-YF5KJH1BPD"
+  };
 
 // Metadados das categorias (ícone, descrição, classe CSS)
 const CAT_META = {
