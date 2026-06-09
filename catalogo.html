@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catálogo — Feirão do Bairro</title>
+<title>Catálogo — Hortifruti</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -317,7 +317,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray);color:var(--text);ov
 <!-- HEADER -->
 <div class="header">
   <a href="index.html" class="header-back">←</a>
-  <div class="header-logo">🌿 Feirão do Bairro <span>Catálogo de Produtos</span></div>
+  <div class="header-logo">Hortifruti <span>Catálogo de Produtos</span></div>
   <button class="cart-btn" onclick="abrirCarrinho()">
     🛒
     <span class="cart-count" id="cart-count">0</span>
@@ -370,7 +370,7 @@ body{font-family:'Nunito',sans-serif;background:var(--gray);color:var(--text);ov
 </div>
 
 <!-- WA FLOAT -->
-<a href="https://wa.me/5511978472942" class="wa-float" target="_blank">
+<a href="https://wa.me/5511941474285" class="wa-float" target="_blank">
   <svg><use href="#wa"/></svg>
 </a>
 
@@ -385,17 +385,17 @@ body{font-family:'Nunito',sans-serif;background:var(--gray);color:var(--text);ov
 // FIREBASE CONFIG
 // =============================================
 const firebaseConfig = {
-  apiKey: "AIzaSyCeRVfELg7fhNpbBvyJ3S1tbVyL8cFjskE",
-  authDomain: "feirao-do-bairro.firebaseapp.com",
-  projectId: "feirao-do-bairro",
-  storageBucket: "feirao-do-bairro.firebasestorage.app",
-  messagingSenderId: "1037414482063",
-  appId: "1:1037414482063:web:2497dc8ca51e43b7a0f0fa"
+  apiKey: "AIzaSyC5ZFLt5z73v8pco0X7nzpb9N2Xlsmfrzo",
+  authDomain: "hortifruti-system.firebaseapp.com",
+  projectId: "hortifruti-system",
+  storageBucket: "hortifruti-system.firebasestorage.app",
+  messagingSenderId: "634521386120",
+  appId: "1:634521386120:web:9f93d751a45a9f8fa3b33d"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const WA_NUMBER = "5511978472942";
+const WA_NUMBER = "5511941474285";
 
 // =============================================
 // STATE
@@ -632,7 +632,7 @@ function alterarQtyCarrinho(id, delta) {
 // =============================================
 function enviarWhatsApp() {
   if (!carrinho.length) { toast('❌ Carrinho vazio!'); return; }
-  let msg = '🌿 *Pedido — Feirão do Bairro*\n\n';
+  let msg = '🌿 *Pedido — Hortifruti*\n\n';
   let total = 0;
   carrinho.forEach(item => {
     const preco = parseFloat((item.precoNovo || '0').replace('R$','').replace(',','.')) || 0;
