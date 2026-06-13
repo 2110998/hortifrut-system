@@ -395,6 +395,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// ===========================
+// MULTI-TENANT: identificador único desta loja
+// Para cada cliente novo, troque APENAS este valor (e o mesmo nos arquivos
+// index.html e admin-2-2.html) por um slug único, ex: "hortifruti-joao"
+// ===========================
+const LOJA_ID = "loja_teste";
+function lojaRef() { return db.collection('lojas').doc(LOJA_ID); }
+
 const WA_NUMBER = "5511941474285";
 
 // =============================================
@@ -408,7 +416,7 @@ let carrinho = JSON.parse(localStorage.getItem('carrinho-feirao') || '[]');
 // =============================================
 // FIREBASE — carregar catálogo
 // =============================================
-db.collection('catalogo').doc('produtos').onSnapshot(doc => {
+lojaRef().collection('catalogo').doc('produtos').onSnapshot(doc => {
   if (doc.exists) {
     const data = doc.data();
     todosProdutos = [];
